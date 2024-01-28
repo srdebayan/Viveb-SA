@@ -1,0 +1,83 @@
+{% extends 'dash_board/base.html' %}
+
+{% block content %}
+<div class="dashboard-content">
+    
+    <!-- Displaying the statistics -->
+    <h2>Execution Statistics</h2>
+    <table class="stats-table">
+        <tr>
+            <th>Completed Successfully</th>
+            <td>{{ num_completed_successfully }} ({{ perc_completed_successfully }}%)</td>
+        </tr>
+        <tr>
+            <th>Completed with Error</th>
+            <td>{{ num_completed_with_error }} ({{ perc_completed_with_error }}%)</td>
+        </tr>
+        <tr>
+            <th>Being Completed</th>
+            <td>{{ num_being_completed }} ({{ perc_being_completed }}%)</td>
+        </tr>
+    </table>
+
+    <!-- Combined Processes Section -->
+    <h2>Processes Overview</h2>
+    <div>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <!-- Dropdown for status selection -->
+            <label for="status-select">Select Status:</label>
+            <select id="status-select" name="statuses" multiple>
+                {% for status in status_options %}
+                <option value="{{ status }}">{{ status }}</option>
+                {% endfor %}
+            </select>
+
+            <!-- Time pickers for start and end date -->
+            <label for="start-time">Start Time:</label>
+            <input type="datetime-local" id="start-time" name="start_time">
+
+            <label for="end-time">End Time:</label>
+            <input type="datetime-local" id="end-time" name="end_time">
+
+             <!-- New input for 'hours before' filter -->
+             <br>
+             <label for="hours-before">Hours Before Now:</label>
+             <input type="number" id="hours-before" name="hours_before" min="0">
+ 
+             
+            <input type="submit" value="Filter">
+        </form>
+
+        <!-- Combined section content -->
+        <div>{{ processes|safe }}</div>
+    </div>
+
+</div>
+
+<style>
+    .stats-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-family: Arial, sans-serif;
+    }
+    .stats-table, .stats-table th, .stats-table td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+    }
+    .stats-table th {
+        background-color: #f2f2f2;
+        font-weight: bold;
+        color: #333;
+    }
+    .stats-table td {
+        color: #666;
+    }
+</style>
+{% endblock %}
+
+
+
+
+

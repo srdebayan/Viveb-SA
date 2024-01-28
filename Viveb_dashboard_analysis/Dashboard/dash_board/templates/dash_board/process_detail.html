@@ -1,0 +1,30 @@
+{% extends 'dash_board/base.html' %}
+
+{% block content %}
+    <h3>Process Detail - {{ process_id }}</h3>
+
+    {% if image_string %}
+        <h4>Execution Time Plot</h4>
+        <img src="data:image/png;base64,{{ image_string }}" alt="Execution Times Plot" style="max-width: 100%; height: auto;">
+    {% else %}
+        <p>No execution time plot available for this process.</p>
+    {% endif %}
+    <h4>Bottleneck APIs</h4>
+    {% if bottleneck_apis %}
+        <ul>
+            {% for api in bottleneck_apis %}
+                <li>{{ api }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No bottleneck APIs identified for this process.</p>
+    {% endif %}
+    <h4>Saga Instances</h4>
+    {% if saga_instances %}
+        <div style="overflow-x: auto;">
+            {{ saga_instances|safe }}
+        </div>
+    {% else %}
+        <p>No saga instances available for this process.</p>
+    {% endif %}
+{% endblock %}

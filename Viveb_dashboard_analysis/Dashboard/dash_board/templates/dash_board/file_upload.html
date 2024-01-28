@@ -1,0 +1,94 @@
+<!-- In your dashboard/templates/dash_board/file_upload.html file -->
+
+{% extends 'dash_board/base.html' %}
+
+{% block content %}
+    <div class="container mt-5">
+        <h1 class="mb-4">Upload Files</h1>
+
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>File Type</th>
+                    <th>Current File Used</th>
+                    <th>Upload New File</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Saga File -->
+                <tr>
+                    <td>Saga File</td>
+                    <td>{% if saga_files.saga %}File Name: <span style="color: greenyellow;">{{ saga_files.saga}}</span>{% else %}No Saga File{% endif %}</td>
+                    <td>
+                        <form method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div class="custom-file">
+                                <input type="file" class="custom-file-input" id="saga-file" name="saga_file" onchange="displayFileName('saga-file')">
+                                <label class="custom-file-label" for="saga-file">Choose file</label>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Upload</button>
+                        </form>
+                    </td>
+                </tr>
+
+                <!-- Saga Instance File -->
+                <tr>
+                    <td>Saga Instance File</td>
+                    <td>{% if saga_files.saga_instance %}File Name: <span style="color: greenyellow;">{{ saga_files.saga_instance}}</span>{% else %}No Saga Instance File{% endif %}</td>
+                    <td>
+                        <form method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div class="custom-file">
+                                <input type="file" class="custom-file-input" id="saga-instance-file" name="saga_instance_file" onchange="displayFileName('saga-instance-file')">
+                                <label class="custom-file-label" for="saga-instance-file">Choose file</label>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Upload</button>
+                        </form>
+                    </td>
+                </tr>
+
+                <!-- Saga Log File -->
+                <tr>
+                    <td>Saga Log File</td>
+                    <td>{% if saga_files.saga_log %}File Name: <span style="color: greenyellow;">{{ saga_files.saga_log}}</span>{% else %}No Saga Log File{% endif %}</td>
+                    <td>
+                        <form method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div class="custom-file">
+                                <input type="file" class="custom-file-input" id="saga-log-file" name="saga_log_file" onchange="displayFileName('saga-log-file')">
+                                <label class="custom-file-label" for="saga-log-file">Choose file</label>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Upload</button>
+                        </form>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <script>
+        function displayFileName(inputId) {
+            
+            const input = document.getElementById(inputId);
+            const fileName = input.files[0] ? input.files[0].name : '';
+            const label = input.nextElementSibling;
+            label.innerHTML = fileName;
+        }
+    
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('form').forEach(function(form) {
+                form.addEventListener('submit', function(event) {
+                    let isValid = true;
+                    form.querySelectorAll('.custom-file-input').forEach(function(input) {
+                        if (!input.files.length) {
+                            alert('Please choose a file.');
+                            isValid = false;
+                        }
+                    });
+                    if (!isValid) {
+                        event.preventDefault(); // Prevent form submission
+                    }
+                });
+            });
+        });
+    </script>
+{% endblock %}
