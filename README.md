@@ -8,3 +8,10 @@ To run the project:
 4. In the terminal go to the Directory Dashboard
 5. pip install -r requirements.txt
 6. python manage.py runserver
+
+
+# Matriculation number and email of all the members:
+Debayan Bhattacharya: 291348, debayan.bhattacharya@student.univaq.it
+Kabita Adhikari: 291355, kabita.adhikari@student.univaq.it 
+Kiran singh Saud
+Mhreteabe
