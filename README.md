@@ -14,4 +14,5 @@ To run the project:
 Debayan Bhattacharya: 291348, debayan.bhattacharya@student.univaq.it
 Kabita Adhikari: 291355, kabita.adhikari@student.univaq.it 
 Kiran singh Saud
-Mhreteabe
+Mhreteabe Tesfaye Dula : 293642 , mhreteabetesfaye.dula@student.univaq.it ​
+
