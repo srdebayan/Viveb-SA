@@ -11,8 +11,8 @@ To run the project:
 
 
 # Matriculation number and email of all the members:
-Debayan Bhattacharya: 291348, debayan.bhattacharya@student.univaq.it
-Kabita Adhikari: 291355, kabita.adhikari@student.univaq.it 
-Kiran singh Saud
-Mhreteabe Tesfaye Dula : 293642 , mhreteabetesfaye.dula@student.univaq.it ​
+Debayan Bhattacharya: 291348, debayan.bhattacharya@student.univaq.it \\
+Kabita Adhikari: 291355, kabita.adhikari@student.univaq.it \\
+Kiran singh Saud: 293648, kiransingh.saud@student.univaq.it \\
+Mhreteabe Tesfaye Dula : 293642 , mhreteabetesfaye.dula@student.univaq.it ​\\
 
