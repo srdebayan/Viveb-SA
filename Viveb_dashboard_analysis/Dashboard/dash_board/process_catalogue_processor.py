@@ -17,8 +17,14 @@ class ProcessCatalogue:
     
     def get_process_catalogue(self):
         # Aggregate data (this is a simplified example, adapt as needed)
-        df1= self.saga_df
-        df2= self.saga_instance_df
+        df1 = self.saga_df
+        df2 = self.saga_instance_df
+
+        # Define status categories
+        completed_columns = ['COMPLETED', 'COMPENSATED']
+        failed_columns = ['FAILED', 'COMPENSATION_FAILED']
+        ongoing_columns = ['IN_PROGRESS', 'PENDING', 'COMPENSATING']
+
         aggregated_data = []
         for _, row in df1.iterrows():
             saga_id = row['saga_id']
@@ -26,17 +32,18 @@ class ProcessCatalogue:
 
             # Calculate statistics
             total_executions = len(related_executions)
-            successful_executions = len(related_executions[related_executions['status'] == 'COMPLETED'])
-            error_executions = len(related_executions[related_executions['status'] == 'FAILED'])
-            ongoing_executions = len(related_executions[related_executions['status'] == 'IN_PROGRESS'])
+            successful_executions = len(related_executions[related_executions['status'].isin(completed_columns)])
+            error_executions = len(related_executions[related_executions['status'].isin(failed_columns)])
+            ongoing_executions = len(related_executions[related_executions['status'].isin(ongoing_columns)])
             status = row['mode_performance_status']
+
             # Determine status (green, yellow, red)
             # Add your logic here based on your criteria
 
             # Append aggregated data
             aggregated_data.append({
                 'name': row['name'],
-                'url' : f'{saga_id}',
+                'url': f'{saga_id}',
                 'total_executions': total_executions,
                 'successful_executions': successful_executions,
                 'error_executions': error_executions,
@@ -46,5 +53,3 @@ class ProcessCatalogue:
 
         context = {'processes': aggregated_data}
         return context
-        
-    

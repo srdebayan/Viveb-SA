@@ -2,52 +2,67 @@
 
 
 
+import matplotlib.pyplot as plt
 import base64
 from io import BytesIO
-import matplotlib.pyplot as plt
-
+import pandas as pd
+import numpy as np
 
 def plot_execution_times(saga_instance_df, saga_df, saga_id):
     try:
-        # Filter saga instances by saga_id and status
-        filtered_instances = saga_instance_df[(saga_instance_df['saga_id'] == saga_id) & (saga_instance_df['status'] == 'COMPLETED')]
+        # Include all instances for the given saga_id
+        filtered_instances = saga_instance_df[saga_instance_df['saga_id'] == saga_id]
 
         # Get mean and std for the saga_id
         saga_stats = saga_df[saga_df['saga_id'] == saga_id]
         if saga_stats.empty:
             print(f"No stats found for saga_id {saga_id}")
-            return
+            return None
 
         mean = saga_stats.iloc[0]['mean']
         std = saga_stats.iloc[0]['std']
 
-        # Plotting
+        # Define color mappings for status categories
+        status_colors = {
+            'COMPLETED': 'green',
+            'COMPENSATED': 'lightgreen',
+            'FAILED': 'red',
+            'COMPENSATION_FAILED': 'lightcoral',
+            'IN_PROGRESS': 'yellow',
+            'PENDING': 'khaki',
+            'COMPENSATING': 'gold'
+        }
+
+        # Prepare the plot
         plt.figure(figsize=(10, 6))
-        plt.scatter(filtered_instances.index, filtered_instances['execution_time_seconds'], label='Execution Times')
-        plt.axhline(y=mean, color='r', linestyle='-', label=f'Mean: {mean}')
-        plt.axhline(y=mean + std, color='g', linestyle='--', label=f'Mean + Std: {mean + std}')
-        plt.axhline(y=mean - std, color='g', linestyle='--', label=f'Mean - Std: {mean - std}')
         
+        # Plot each instance, using specific colors based on status category
+        for status, instances in filtered_instances.groupby('status'):
+            color = status_colors.get(status, 'grey')  # Default to grey if status not in dict
+            plt.scatter(instances.index, instances['execution_time_seconds'], label=status, color=color)
+
+        # Plot mean and standard deviation lines
+        plt.axhline(y=mean, color='r', linestyle='-', label='Mean')
+        plt.axhline(y=mean + std, color='g', linestyle='--', label='Mean + Std')
+        plt.axhline(y=mean - std, color='g', linestyle='--', label='Mean - Std')
+
         plt.xlabel('Instance Index')
         plt.ylabel('Execution Time (seconds)')
         plt.title(f'Execution Times for Saga ID {saga_id}')
         plt.legend()
-        #plt.show()
-        # Save the plot to a BytesIO object
-        buffer = BytesIO()
-        plt.savefig(buffer, format='png')
-        buffer.seek(0)
 
-        # Encode the image as base64 and decode it to a string
+        # Save the plot to a BytesIO object and encode as base64 for embedding in HTML
+        buffer = BytesIO()
+        plt.savefig(buffer, format='png', bbox_inches='tight')
+        buffer.seek(0)
         image_png = buffer.getvalue()
         buffer.close()
         base64_encoded = base64.b64encode(image_png).decode('utf-8')
 
         return base64_encoded
     except Exception as e:
-        print(f"Error in plot_execution_times_base64: {e}")
+        print(f"Error in plot_execution_times: {e}")
         return None
-    
 
 
 

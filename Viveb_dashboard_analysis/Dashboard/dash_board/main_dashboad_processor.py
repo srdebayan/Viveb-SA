@@ -24,38 +24,39 @@ class MainDashboard():
         return self.saga_instance_df.status.unique().tolist()
     
     def get_process_execution_stats(self):
-        df=self.saga_instance_df
+        df = self.saga_instance_df
         total_executions = len(df)
-        #print(self.saga_instance_df.columns,flush=True)
-        #print(df.status.value_counts().index,flush=True)
-        completed_successfully = df[df['status'] == 'COMPLETED']
-        completed_with_error = df[df['status'] == 'FAILED']
-        being_completed = df[(df['status'] == 'PENDING') |  (df['status'] == 'IN_PROGRESS')]  # Assuming 'PENDING'  status also means being completed
-        compensated = df[df['status'] == 'COMPENSATED']
-        
+
+        # Define status categories
+        completed_columns = ['COMPLETED', 'COMPENSATED']
+        failed_columns = ['FAILED', 'COMPENSATION_FAILED']
+        ongoing_columns = ['IN_PROGRESS', 'PENDING', 'COMPENSATING']
+
+        # Filter dataframes based on status
+        completed_successfully = df[df['status'].isin(completed_columns)]
+        completed_with_error = df[df['status'].isin(failed_columns)]
+        being_completed = df[df['status'].isin(ongoing_columns)]
+
         # Calculating numbers and percentages
         num_completed_successfully = len(completed_successfully)
-        perc_completed_successfully = (num_completed_successfully / total_executions) * 100
+        perc_completed_successfully = round((num_completed_successfully / total_executions) * 100, 2) if total_executions > 0 else 0
         num_completed_with_error = len(completed_with_error)
-        perc_completed_with_error = (num_completed_with_error / total_executions) * 100
+        perc_completed_with_error = round((num_completed_with_error / total_executions) * 100, 2) if total_executions > 0 else 0
         num_being_completed = len(being_completed)
-        perc_being_completed = (num_being_completed / total_executions) * 100
-        num_compensated = len(compensated)  # Number of compensated executions
-        perc_compensated = (num_compensated / total_executions) * 100  # Percentage of compensated executions
+        perc_being_completed = round((num_being_completed / total_executions) * 100, 2) if total_executions > 0 else 0
 
-        stats= {
-        'total_executions': total_executions,
-        'num_completed_successfully': num_completed_successfully,
-        'perc_completed_successfully': perc_completed_successfully,
-        'num_completed_with_error': num_completed_with_error,
-        'perc_completed_with_error': perc_completed_with_error,
-        'num_being_completed': num_being_completed,
-        'perc_being_completed': perc_being_completed,
-        'num_compensated': num_compensated,  # Add to context
-        'perc_compensated': perc_compensated,  # Add to context
-        
-    }    
+        stats = {
+            'total_executions': total_executions,
+            'num_completed_successfully': num_completed_successfully,
+            'perc_completed_successfully': perc_completed_successfully,
+            'num_completed_with_error': num_completed_with_error,
+            'perc_completed_with_error': perc_completed_with_error,
+            'num_being_completed': num_being_completed,
+            'perc_being_completed': perc_being_completed,
+        }
+
         return stats
+
 
     def filter_dataframe(self, status, time_beg, time_end):
         df = self.saga_instance_df.copy()
