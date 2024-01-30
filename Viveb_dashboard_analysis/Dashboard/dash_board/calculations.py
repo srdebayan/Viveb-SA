@@ -103,9 +103,11 @@ def determine_step_performance(steps_df, api_statistics_df):
         steps_df = steps_df.merge(api_statistics_df, on='name', how='left')
 
         def assign_status(row):
-            if row['execution_time'] <= row['mean'] + 0.01 * row['std']:
+            row['mean'] += 0.000001 #added to avoid division by zero error
+            variance = 100 * abs(row['mean']-row['execution_time']) / row['mean']
+            if variance < 5:
                 return 'green'
-            elif row['execution_time'] <= row['mean'] + 0.1 * row['std']:
+            elif variance < 10:
                 return 'yellow'
             else:
                 return 'red'
@@ -122,14 +124,22 @@ def determine_saga_performance(saga_instance_df, saga_performance_statistics_df)
         saga_instance_df = saga_instance_df.merge(saga_performance_statistics_df, on='saga_id', how='left')
 
         def assign_saga_status(row):
-            if row['execution_time_seconds'] <= row['mean'] + 0.01 * row['std']:
+            row['mean'] += 0.000001 #added to avoid division by zero error
+            variance = 100 * abs(row['mean']-row['execution_time_seconds']) / row['mean']
+            if variance < 5:
                 return 'green'
-            elif row['execution_time_seconds'] <= row['mean'] + 0.2 * row['std']:
+            elif variance < 20:
                 return 'yellow'
             else:
                 return 'red'
+        def assign_peformace_reason(row):
+            row['mean'] += 0.000001 #added to avoid division by zero error
+            variance = 100 * abs(row['mean']-row['execution_time_seconds']) / row['mean']
+            return f"execution time has a variance of {variance}"
+        
 
         saga_instance_df['performance_status'] = saga_instance_df.apply(assign_saga_status, axis=1)
+        saga_instance_df['performance_reason1'] = saga_instance_df.apply(assign_peformace_reason,axis=1)
         return saga_instance_df
     except Exception as e:
         print(f"Error in determine_saga_performance: {e}")
@@ -154,7 +164,7 @@ def calculate_overall_metrics(saga_df, saga_instance_df, saga_steps_df):
 
         for saga_id in saga_df['saga_id']:
             # Find the last 10 instances for the saga_id
-            last_10_instances = saga_instance_df[saga_instance_df['saga_id'] == saga_id].nlargest(10, 'createdAt_$date')
+            last_10_instances = saga_instance_df[saga_instance_df['saga_id'] == saga_id].nlargest(1, 'createdAt_$date')
 
             # Find the mode of the performance_status using Pandas' mode() method
             mode_performance_status = last_10_instances['performance_status'].mode()[0] if not last_10_instances['performance_status'].mode().empty else None
@@ -179,10 +189,11 @@ def calculate_overall_metrics(saga_df, saga_instance_df, saga_steps_df):
                 saga_instance_df.loc[saga_instance_df['saga_instance_id'] == instance['saga_instance_id'], 'green_apis'] = str(green_apis)
                 saga_instance_df.loc[saga_instance_df['saga_instance_id'] == instance['saga_instance_id'], 'yellow_apis'] = str(yellow_apis)
                 saga_instance_df.loc[saga_instance_df['saga_instance_id'] == instance['saga_instance_id'], 'red_apis'] = str(red_apis)
+            
 
         # Save the updated DataFrames back to their original paths
         saga_df.to_csv("media\df\saga_file.csv", index=False)
-        saga_instance_df.to_csv("media\df\saga_instance_main_file.csv", index=False)
+        saga_instance_df.to_csv("media\df\saga_instance_main.csv", index=False)
 
         print("DataFrames updated and saved successfully.")
     except Exception as e:

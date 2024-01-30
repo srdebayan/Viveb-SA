@@ -12,7 +12,7 @@ urlpatterns = [
     path('',views.main_dashboard,name="homepage"),
      path('upload/', views.file_upload, name='file_upload'),
      path('process_catalogue/',views.processes_catalogue,name="process_catalogue"),
-     path('process/<process_id>',views.process_detail,name="process_detail")
+     path('process/<process_id>',views.process_detail,name="process_detail"),
 ]
 
 

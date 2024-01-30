@@ -16,7 +16,6 @@ from .process_dashboard import plot_execution_times,get_saga_instances_by_id,get
 
 
 
-
 def process_detail(request, process_id):
     saga_df = load_saga_df()
     saga_instance_df, saga_step_df = load_saga_instance_dfs()

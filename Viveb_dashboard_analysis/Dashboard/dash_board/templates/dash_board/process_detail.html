@@ -9,6 +9,8 @@
     {% else %}
         <p>No execution time plot available for this process.</p>
     {% endif %}
+
+     
     <h4>Bottleneck APIs</h4>
     {% if bottleneck_apis %}
         <ul>
@@ -19,6 +21,7 @@
     {% else %}
         <p>No bottleneck APIs identified for this process.</p>
     {% endif %}
+    
     <h4>Saga Instances</h4>
     {% if saga_instances %}
         <div style="overflow-x: auto;">
@@ -27,4 +30,6 @@
     {% else %}
         <p>No saga instances available for this process.</p>
     {% endif %}
+    
+    
 {% endblock %}
